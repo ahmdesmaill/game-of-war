@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Exo 2", sans-serif;
+    background-image: url("./img/table.png");
+    color: white;
+}
+
+button {
+    cursor: pointer;
+    background-color: yellow;
+    border: none;
+}
+
+.top {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+#new-deck-button {
+    padding: 5px;
+}
+
+#remaining-cards-label {
+    display: inline-block;
+    margin: 1px 0 0;
+}
+
+#status-label {
+    font-size: 1.55rem;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+#computer-score-label, #player-score-label {
+    font-size: 1.15rem;
+    margin: 15px;
+}
+
+#card1-placeholder, #card2-placeholder {
+    width: 90px;
+    height: calc(90px * 7 / 5);
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#card1-placeholder {
+    margin-bottom: 12px;
+}
+
+#draw-button {
+    align-self: stretch;
+    margin-top: 15px;
+    font-size: 1.25rem;
+    padding: 5px 0;
+}
