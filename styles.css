@@ -1,5 +1,6 @@
 body {
     margin: 0;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,12 +37,14 @@ button {
     margin-top: 5px;
 }
 
-#computer-score-label, #player-score-label {
+#computer-score-label,
+#player-score-label {
     font-size: 1.15rem;
     margin: 15px;
 }
 
-#card1-placeholder, #card2-placeholder {
+#card1-placeholder,
+#card2-placeholder {
     width: 90px;
     height: calc(90px * 7 / 5);
     border: 1px solid black;
