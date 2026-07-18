@@ -33,39 +33,69 @@ const cardValueRanks = {
 };
 
 buttonElements.newDeck.addEventListener("click", async (e) => {
-  const result = await fetch(
-    "https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/",
-  );
-  const data = await result.json();
-  gameData.deckId = data.deck_id;
-  gameData.computerScore = 0;
-  gameData.playerScore = 0;
-  cardPlaceholders[0].innerHTML = "";
-  cardPlaceholders[1].innerHTML = "";
+  try {
+    const result = await fetch(
+      "https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/",
+    );
+    if (!result.ok) {
+      throw new Error(`HTTP error: ${result.status}`);
+    }
+    const data = await result.json();
+    if (!data.success) {
+      throw new Error("API returned success: false");
+    }
+    gameData.deckId = data.deck_id;
+    gameData.computerScore = 0;
+    gameData.playerScore = 0;
+    cardPlaceholders[0].innerHTML = "";
+    cardPlaceholders[1].innerHTML = "";
 
-  labelElements.gameStatus.textContent = "Game of War";
-  labelElements.remainingCards.textContent = `Remaining cards: ${data.remaining}`;
-  labelElements.computerScore.textContent = "Computer score: 0";
-  labelElements.playerScore.textContent = "My score: 0";
-  buttonElements.draw.disabled = false;
+    labelElements.gameStatus.textContent = "Game of War";
+    labelElements.remainingCards.textContent = `Remaining cards: ${data.remaining}`;
+    labelElements.computerScore.textContent = "Computer score: 0";
+    labelElements.playerScore.textContent = "My score: 0";
+    buttonElements.draw.disabled = false;
+  } catch (err) {
+    labelElements.gameStatus.textContent =
+      "Failed to create deck. Please try again.";
+    console.error("New deck error:", err);
+  }
 });
 
 buttonElements.draw.addEventListener("click", async (e) => {
-  const result = await fetch(
-    `https://apis.scrimba.com/deckofcards/api/deck/${gameData.deckId}/draw/?count=2`,
-  );
-  const data = await result.json();
-  const [card1, card2] = data.cards;
-  cardPlaceholders[0].innerHTML = `<img class="card-img" src="${card1.image}" alt="${card1.value} of ${card1.suit}" />`;
-  cardPlaceholders[1].innerHTML = `<img class="card-img" src="${card2.image}" alt="${card2.value} of ${card2.suit}" />`;
-  labelElements.gameStatus.textContent = handleRoundWinner(card1, card2);
-  labelElements.remainingCards.textContent = `Remaining cards: ${data.remaining}`;
-  labelElements.computerScore.textContent = `Computer score: ${gameData.computerScore}`;
-  labelElements.playerScore.textContent = `My score: ${gameData.playerScore}`;
+  if (!gameData.deckId) {
+    labelElements.gameStatus.textContent = "Please create a new deck first.";
+    return;
+  }
 
-  if (data.remaining === 0) {
-    buttonElements.draw.disabled = true;
-    labelElements.gameStatus.textContent = getFinalWinnerString();
+  try {
+    const result = await fetch(
+      `https://apis.scrimba.com/deckofcards/api/deck/${gameData.deckId}/draw/?count=2`,
+    );
+    if (!result.ok) {
+      throw new Error(`HTTP error: ${result.status}`);
+    }
+    const data = await result.json();
+    if (!data.success) {
+      throw new Error("API returned success: false");
+    }
+    const [card1, card2] = data.cards;
+    cardPlaceholders[0].innerHTML = `<img class="card-img" src="${card1.image}" alt="${card1.value} of ${card1.suit}" />`;
+    cardPlaceholders[1].innerHTML = `<img class="card-img" src="${card2.image}" alt="${card2.value} of ${card2.suit}" />`;
+    labelElements.gameStatus.textContent = handleRoundWinner(card1, card2);
+    labelElements.remainingCards.textContent = `Remaining cards: ${data.remaining}`;
+    labelElements.computerScore.textContent = `Computer score: ${gameData.computerScore}`;
+    labelElements.playerScore.textContent = `My score: ${gameData.playerScore}`;
+
+    if (data.remaining === 0) {
+      buttonElements.draw.disabled = true;
+      labelElements.gameStatus.textContent = getFinalWinnerString();
+      gameData.deckId = "";
+    }
+  } catch (err) {
+    labelElements.gameStatus.textContent =
+      "Failed to draw cards. Please try again.";
+    console.error("Draw cards error:", err);
   }
 });
 
